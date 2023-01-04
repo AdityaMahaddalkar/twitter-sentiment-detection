@@ -1,16 +1,24 @@
-# This is a sample Python script.
+import json
 
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
+from flask import Flask, request
+from langdetect import detect
+
+app = Flask(__name__)
+
+INPUT_TEXT_KEY = 'tweet_text'
+IS_ENGLISH_KEY = 'is_english'
+ENGLISH_LANGUAGE_SYMBOL = 'en'
 
 
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
+@app.route('/api/language-detection', methods=["POST"])
+def detect_language():
+    record = json.loads(request.data)
+    response = list(map(lambda x:
+                        {INPUT_TEXT_KEY: x[INPUT_TEXT_KEY],
+                         IS_ENGLISH_KEY: detect(x[INPUT_TEXT_KEY]) == ENGLISH_LANGUAGE_SYMBOL},
+                        list(record)))
+    return response
 
 
-# Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    print_hi('PyCharm')
-
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+    app.run(port=8080)
