@@ -1,4 +1,4 @@
-const BASE_URL = "http://127.0.0.1:8080";
+const BASE_URL = "https://vernal-house-373720.uc.r.appspot.com";
 const ENGLISH_CHECK_API = "/api/language-detection";
 const SENTIMENT_SCORE_API = "/api/sentiment-score";
 
@@ -13,9 +13,9 @@ function addSentimentToTweets() {
     let tweetText = tweet.querySelector('div[data-testid="tweetText"]')
       ?.firstElementChild?.textContent;
 
-    if (tweetText && !TWEETS_COMPLETED.has(tweetText)) {
-      let tweetId = tweet.getAttribute("aria-labelledby");
+    let tweetId = tweet.getAttribute("aria-labelledby");
 
+    if (tweetText && !TWEETS_COMPLETED.has(tweetId)) {
       tweetTextList.push({
         text: tweetText,
       });
@@ -25,7 +25,7 @@ function addSentimentToTweets() {
         tweet: tweet,
       });
 
-      TWEETS_COMPLETED.add(tweetText);
+      TWEETS_COMPLETED.add(tweetId);
     }
   }
 
@@ -47,6 +47,8 @@ function addSentimentToTweets() {
     getSentiment(tweetTextList).then((response) => {
       let sentimentMap = new Map();
 
+      console.log(response);
+
       for (let sentimentObj of response) {
         sentimentMap.set(
           sentimentObj["tweet_text"],
@@ -54,13 +56,9 @@ function addSentimentToTweets() {
         );
       }
 
-      console.log(sentimentMap);
-
       for (let i = 0; i < validTweets.length; i++) {
         let emoji,
           tweetId = validTweets[i]["id"];
-
-        console.log(`${tweetId} : ${sentimentMap.get(tweetId)}`);
         if (sentimentMap.get(tweetId) == "POSITIVE") emoji = "😊";
         else if (sentimentMap.get(tweetId) == "NEGATIVE") emoji = "☹️";
         else emoji = "😐";
@@ -72,10 +70,17 @@ function addSentimentToTweets() {
         console.log(positionToReplace);
 
         if (!positionToReplace.querySelector(".sentiment")) {
+          let span = document.createElement("span");
+          span.className =
+            "sentiment css-901oao r-1bwzh9t r-1q142lx r-37j5jr r-1b43r93 r-16dba41 r-hjklzo r-bcqeeo r-s1qlax r-qvutc0";
+          span.textContent = "·";
+
+          positionToReplace.appendChild(span);
+
           let div = document.createElement("div");
-          div.className = "sentiment";
-          div.style.color = "#657786";
-          div.innerHTML = `Detected Mood: ${emoji}`;
+          div.className =
+            "sentiment css-901oao r-1bwzh9t r-1q142lx r-37j5jr r-1b43r93 r-16dba41 r-hjklzo r-bcqeeo r-s1qlax r-qvutc0";
+          div.textContent = `Detected Mood: ${emoji}`;
           positionToReplace.appendChild(div);
         }
       }
@@ -112,8 +117,7 @@ function getSentiment(tweets) {
 }
 
 function main() {
-  addSentimentToTweets();
-
+  setTimeout(addSentimentToTweets, 5 * 1000);
   let body = document.body;
   body.onscroll = addSentimentToTweets;
 }
