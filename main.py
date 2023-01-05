@@ -1,10 +1,15 @@
 import json
+import logging
 
 from flask import Flask, request
 from langdetect import detect
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 
 app = Flask(__name__)
+
+logging.basicConfig(
+    level=logging.INFO
+)
 
 INPUT_TEXT_KEY = 'tweet_text'
 IS_ENGLISH_KEY = 'is_english'
@@ -37,6 +42,8 @@ def detect_language():
                 INPUT_TEXT_KEY: record[INPUT_TEXT_KEY],
                 IS_ENGLISH_KEY: False,
             })
+            logging.error(f'Exception in {record[INPUT_TEXT_KEY]}')
+            logging.error(e)
             
     return response
 
