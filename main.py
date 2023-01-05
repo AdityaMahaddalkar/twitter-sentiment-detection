@@ -21,11 +21,23 @@ analyzer = SentimentIntensityAnalyzer()
 
 @app.route('/api/language-detection', methods=["POST"])
 def detect_language():
-    record = json.loads(request.data)
-    response = list(map(lambda x:
-                        {INPUT_TEXT_KEY: x[INPUT_TEXT_KEY],
-                         IS_ENGLISH_KEY: detect(x[INPUT_TEXT_KEY]) == ENGLISH_LANGUAGE_SYMBOL},
-                        list(record)))
+    records = json.loads(request.data)
+
+    response = []
+
+    for record in list(records):
+        try:
+            language = detect(record[INPUT_TEXT_KEY])
+            response.append({
+                INPUT_TEXT_KEY: record[INPUT_TEXT_KEY],
+                IS_ENGLISH_KEY: language == ENGLISH_LANGUAGE_SYMBOL,
+            })
+        except Exception as e:
+            response.append({
+                INPUT_TEXT_KEY: record[INPUT_TEXT_KEY],
+                IS_ENGLISH_KEY: False,
+            })
+            
     return response
 
 
