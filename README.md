@@ -6,6 +6,13 @@ This project is a chrome extension for analyzing sentiments in tweets posted on 
 
 We assign a familiar emoji to the tweets which represent the sentiment of that tweet.
 
+## How To Install
+
+1. Enable Developer Mode in Chrome browser (⚠️Please refer Chrome documentation for possible issues in enabling Developer Mode⚠️)
+2. Navigate to `chrome://extensions` in Chrome
+3. Drag and drop `./extension` folder into `chrome://extensions` tab
+4. Navigate to `twitter.com`
+
 ## Implementation Details
 
 - Backend
